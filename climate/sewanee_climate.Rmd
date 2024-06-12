@@ -1,0 +1,80 @@
+---
+title: "Sewanee Climate Change Report"
+author: "Adri Silva, BreAsia Calhoun, Nicole Nguyen, and Ramzy Maraqa"
+date: "2024-06-12"
+output: html_document
+---
+<html>
+<head>
+<style>
+body {font-family: Times New Roman;}
+</style>
+</head>
+<body>
+
+# Introduction
+### Our Questions
+1. What is the average temperature per year at Sewanee from 2010 to 2020?
+2. What is the minimum and maximum temperature per year for the entire period?
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, warnings = FALSE, messages = FALSE)
+
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+
+climate <- read_csv("sewanee_weather.csv")
+
+```
+
+# Average Temperature Per Year, 2010 to 2020
+```{r}
+
+# Add a column to extract year from date string and create a create a column for average temperature per year. 
+climate <- climate %>% mutate(YEAR = year(DATE)) %>% 
+  mutate(AVG_TEMP = (TMAX+TMIN)/2)
+
+# Filter years 2010 to 2020 creating a new dataset that groups years together. 
+climate_2010_2020 <- climate %>%
+  filter(YEAR >= 2010, YEAR <= 2020) %>%
+  select(YEAR, AVG_TEMP) %>%
+  group_by(YEAR) %>%
+  summarise(AVG_TEMP = mean(AVG_TEMP, na.rm = TRUE)) 
+
+ggplot(data = climate_2010_2020, aes(x = YEAR, y = AVG_TEMP)) +
+  geom_line() +
+  labs(title = "Annual Average Temperature Per Year, 2010-2020",
+       x = "Year",
+       y = "Temperature in Degrees Farenheit") +
+  theme_light()
+
+```
+
+# Minimum and Maximum Temperature per Year, 2000 to 2024
+```{r}
+
+# No need to extract columns for average, as we want to keep Minimum and Maximum. We already extracted YEAR.# Add a column to extract year from date string and create a create a column for average temperature per year. 
+
+# Filter years 2010 to 2020 creating a new dataset that groups years together. 
+climate <- climate %>% mutate(YEAR = year(DATE))
+
+climate_min_max <- climate %>%
+  select(YEAR, TMIN, TMAX) %>%
+  group_by(YEAR) %>% 
+  summarize(TMIN = mean(TMIN, na.rm = TRUE), TMAX = mean(TMAX, na.rm = TRUE))
+
+ggplot(data = climate_min_max) +
+  geom_line(aes(x = YEAR, y = TMIN, color = "Min. Temp.")) +
+  geom_line(aes(x = YEAR, y = TMAX, color = "Max. Temp.")) +
+  labs(title = "Annual Min. and Max. Temperature Per Year, 2000-2024",
+       x = "Year",
+       y = "Min. and Max. Temperature in Degrees Farenheit",
+       color = "Temp. Avg.") +
+  theme_light() # +
+  # scale_color_manual(values = c("Red", "Blue"))
+
+```
+
+
+
