@@ -59,6 +59,7 @@ sw <- read_csv('https://raw.githubusercontent.com/databrew/intro-to-data-science
 
 # 16. Remove from word_freq any rows in which the word appears in sw.
 word_freq_clean <- anti_join(word_freq, sw, by = "word")
+  # OR: word_freq_clean <- word_freq %>% filter(!word %in% sw$word)
 
 # 17. Make a new word cloud.
 wordcloud2(data = word_freq_clean)
@@ -66,38 +67,46 @@ wordcloud2(data = word_freq_clean)
 # 18. Make an object with the top 10 words used only. Name this object top10.
 top10 <- head(word_freq_clean[order(-word_freq_clean$n),], 10)
 
+      # top_10 <- word_freq_clean %>% arrange(desc(n)) %>% head(10)
+
 # 19. Create a bar chart showing the number of times the top10 words were used.
 ggplot(data = top10, aes(x = word, y = n, fill = word)) + geom_col()
 
 # 20. Run the below to join word_freq with sentiments.
-
+sentiment_freq <- left_join(word_freq, sentiments, by = "word")
 
 # 21. Now explore the data. What is going on?
-#   
-#   22. For the whole survey, were there more negative or positive sentiment words used?
-#   
-#   23. Create an object with the number of negative and positive words used for each person.
-# 
-# 24. In that object, create a new variabled named sentimentality, which is the number of positive words minus the number of negative words.
-# 
+      # The words which have sentiment are coded to determine the type of sentiment. 
+
+# 22. For the whole survey, were there more negative or positive sentiment words used?
+table(sentiment_freq$sentiment) # positive! :D
+
+# 23. Create an object with the number of negative and positive words used for each person.
+
+sentiment_by_person <- left_join(words, sentiments, by = "word")
+
+table(sentiment_by_person$sentiment, sentiment_by_person$first_name)
+
+# 24. In that object, create a new variable named sentimentality, which is the number of positive words minus the number of negative words.
+
 # 25. Make a histogram of senitmentality
-# 
+
 # 26. Make a barplot of sentimentality.
-# 
+
 # 27. Create a wordcloud for the dream variable.
-# 
+
 # 28. Create a barplot showing the top 16 words in our dreams.
-# 
+
 # 29. Which word showed up most in people’s description of Joe?
-#   
-#   30. Make a histogram of feeling_num.
-# 
+
+# 30. Make a histogram of feeling_num.
+
 # 31. Make a density chart of feeling_num.
-# 
+
 # 32. Change the above plot to facet it by gender.
-# 
+
 # 33. How many people mentioned Ryan Gosling in their description of Joe?
-#   
-#   34. Is there a correlation between the sentimentality of people’s feeling and their feeling_num?
-#   
+
+# 34. Is there a correlation between the sentimentality of people’s feeling and their feeling_num?
+
   
